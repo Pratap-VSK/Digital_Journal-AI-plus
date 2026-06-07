@@ -19,13 +19,20 @@ def login(request):
     if request.method == "POST":
         form = AuthenticationForm(request.POST)
         if form.is_valid():
+            user = form.get_user()
+            login(request, user)
             messages.success(request, "You have been logged in successfully!")
-            return redirect("account:dashboard")
+            return redirect("journal:dashboard")
     else:
         form = AuthenticationForm()
     return render(request, "account/login.html", {"form": form})
 
 def logout(request):
-    messages.success(request, "You have been logged out successfully!")
+    if request.method == 'POST':
+        logout(request)
+        return redirect('account:login')
+        messages.success(request, "You have been logged out successfully!")
     return render(request, "account/logout.html")
 
+def forgot_password(request):
+    return render(request, 'accounts/forgot_password.html')
