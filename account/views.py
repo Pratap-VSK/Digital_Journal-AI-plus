@@ -1,38 +1,39 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-# Create your views here.
 
-
-def register(request):
-    if request.method == "POST":
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard') # Agar logged in hai toh register pe mat aane do
+        
+    if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "You have been registered successfully!")
-            return redirect("account:login")
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Account created successfully!")
+            return redirect('dashboard')
     else:
         form = UserCreationForm()
-    return render(request, "account/register.html", {"form": form})
+    return render(request, 'accounts/register.html', {'form': form})
 
-def login(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request.POST)
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard') # Agar logged in hai toh direct dashboard
+        
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, "You have been logged in successfully!")
-            return redirect("journal:dashboard")
+            messages.success(request, f"Welcome back, {user.username}!")
+            return redirect('dashboard')
     else:
         form = AuthenticationForm()
-    return render(request, "account/login.html", {"form": form})
+    return render(request, 'accounts/login.html', {'form': form})
 
-def logout(request):
-    if request.method == 'POST':
-        logout(request)
-        return redirect('account:login')
-        messages.success(request, "You have been logged out successfully!")
-    return render(request, "account/logout.html")
-
-def forgot_password(request):
-    return render(request, 'accounts/forgot_password.html')
+def logout_view(request):
+    logout(request)
+    messages.info(request, "You have been securely logged out.")
+    return redirect('home')
