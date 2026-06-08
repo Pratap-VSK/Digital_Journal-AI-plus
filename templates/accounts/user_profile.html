@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | ProJournal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 antialiased min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+        <div class="bg-slate-900 p-8 text-center">
+            <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-4xl font-black shadow-lg border-4 border-slate-900">
+                {{ request.user.username|make_list|first|upper }}
+            </div>
+            <h2 class="mt-4 text-3xl font-black text-white">{{ request.user.username }}</h2>
+            <p class="text-slate-400 mt-1">{{ request.user.email|default:"No email provided" }}</p>
+        </div>
+        <div class="p-8 space-y-4">
+            <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <span class="text-slate-500 font-bold text-sm">STATUS</span>
+                <span class="px-3 py-1 bg-green-100 text-green-700 font-bold text-xs rounded-full">Active</span>
+            </div>
+            <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <span class="text-slate-500 font-bold text-sm">JOINED</span>
+                <span class="text-slate-700 font-bold text-sm">{{ request.user.date_joined|date:"M d, Y" }}</span>
+            </div>
+            <div class="mt-8">
+                <a href="{% url 'home' %}" class="block w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition">
+                    ← Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

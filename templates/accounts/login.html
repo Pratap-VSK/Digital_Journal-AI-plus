@@ -1,3 +1,4 @@
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,19 +8,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        body { background-color: #f8fafc; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
-        form p { margin-bottom: 1.25rem; }
-        form label { display: block; font-size: 0.875rem; font-weight: 700; color: #334155; margin-bottom: 0.5rem; }
-        form input { width: 100%; padding: 0.875rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; transition: border-color 0.2s; }
-        form input:focus { border-color: #3b82f6; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* Custom Styling to beautify standard Django Form Inputs */
+        form input { width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-size: 0.9rem; transition: all 0.2s; }
+        form input:focus { border-color: #4f46e5; background: #fff; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        ul.errorlist { font-size: 0.75rem; color: #ef4444; margin-bottom: 0.5rem; font-weight: 600; }
+        ul.errorlist li { list-style-type: none; }
     </style>
 </head>
-{% load socialaccount %}
-<body class="antialiased min-h-screen flex items-center justify-center relative overflow-hidden">
-
-    <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM5NGExYjIiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0YTYgNiAwIDExMC0xMiA2IDYgMCAwMTAgMTJ6TTM2IDQ0YTYgNiAwIDExMC0xMiA2IDYgMCAwMTAgMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-50 z-0"></div>
-    <div class="absolute -top-20 -right-20 w-96 h-96 bg-blue-400/20 rounded-full blur-[80px] pointer-events-none z-0"></div>
-    <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-purple-400/20 rounded-full blur-[80px] pointer-events-none z-0"></div>
+<body class="antialiased bg-white text-slate-800">
 
     {% if messages %}
     <div class="fixed top-6 right-6 z-50 flex flex-col gap-2">
@@ -31,51 +30,125 @@
     </div>
     {% endif %}
 
-    <div class="relative z-10 max-w-md w-full px-4">
-        <div class="text-center mb-8">
-            <a href="{% url 'home' %}" class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-lg text-white mb-6 hover:scale-105 transition-transform">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-            </a>
-            <h2 class="text-3xl font-black text-slate-900 tracking-tight">Welcome Back</h2>
-            <p class="text-slate-500 font-medium mt-2">Log in to your secure workspace.</p>
+    <div class="flex min-h-screen">
+        
+        <div class="hidden lg:flex lg:w-1/2 bg-slate-900 relative overflow-hidden flex-col justify-between p-12">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM5NGExYjIiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0YTYgNiAwIDExMC0xMiA2IDYgMCAwMTAgMTJ6TTM2IDQ0YTYgNiAwIDExMC0xMiA2IDYgMCAwMTAgMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20 z-0"></div>
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/30 rounded-full blur-[100px] pointer-events-none"></div>
+            <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-600/30 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <div class="relative z-10">
+                <a href="{% url 'home' %}" class="flex items-center gap-3 text-white w-max group">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    </div>
+                    <span class="text-2xl font-black tracking-tight">ProJournal</span>
+                </a>
+            </div>
+
+            <div class="relative z-10 max-w-md">
+                <h2 class="text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
+                    Welcome back.<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Your vault awaits.</span>
+                </h2>
+                <p class="text-slate-400 text-lg font-medium">Log in to access your secure, AI-powered digital brain.</p>
+            </div>
         </div>
 
-        <div class="bg-white/90 backdrop-blur-xl rounded-[2rem] shadow-2xl shadow-slate-200/50 p-8 sm:p-10 border border-white">
-            
-            <div class="space-y-3 mb-8">
-                <button class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl shadow-sm transition">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                    Continue with Google
-                </button>
-                <div class="flex gap-3">
-                    <button class="w-1/2 flex items-center justify-center gap-2 bg-slate-900 text-white hover:bg-slate-800 font-bold py-3 rounded-xl shadow-sm transition">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .33.225.705.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg> GitHub
-                    </button>
-                    <button class="w-1/2 flex items-center justify-center gap-2 bg-[#1877F2] text-white hover:bg-[#166FE5] font-bold py-3 rounded-xl shadow-sm transition">
-                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook
-                    </button>
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 h-screen overflow-y-auto">
+            <div class="w-full max-w-md">
+                
+                <div class="lg:hidden flex justify-center mb-8">
+                    <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg text-white">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    </div>
                 </div>
-            </div>
 
-            <div class="relative flex items-center mb-8">
-                <div class="flex-grow border-t border-slate-200"></div>
-                <span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-bold uppercase tracking-wider">Or continue with Email</span>
-                <div class="flex-grow border-t border-slate-200"></div>
-            </div>
+                <div class="mb-8 text-center lg:text-left">
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Sign In</h2>
+                    <p class="text-slate-500 font-medium mt-1 text-sm">Continue with your preferred method.</p>
+                </div>
 
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="w-full mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95">
-                    Log In securely
-                </button>
-            </form>
+                <div class="space-y-3 mb-6">
+                    <a href="{% provider_login_url 'google' %}" class="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl shadow-sm transition">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        Sign in with Google
+                    </a>
+                </div>
+
+                <div class="relative flex items-center mb-6">
+                    <div class="flex-grow border-t border-slate-200"></div>
+                    <span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-bold uppercase tracking-widest">Or sign in with email</span>
+                    <div class="flex-grow border-t border-slate-200"></div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="mb-4 text-red-500 text-sm font-bold">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <label for="{{ form.username.id_for_label }}" class="block text-[0.75rem] font-extrabold text-slate-600 mb-1.5 uppercase tracking-wide">Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <p class="text-red-500 text-xs mt-1 font-semibold">{{ form.username.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-6 relative">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="{{ form.password.id_for_label }}" class="block text-[0.75rem] font-extrabold text-slate-600 uppercase tracking-wide">Password</label>
+                            <a href="{% url 'password_reset' %}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition hover:underline">Forgot password?</a>
+                        </div>
+                        
+                        <div class="relative">
+                            {{ form.password }}
+                            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-indigo-600 transition" aria-label="Toggle password visibility">
+                                <svg id="eye-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eye-slash-icon" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.936 9.936 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </button>
+                        </div>
+                        {% if form.password.errors %}
+                            <p class="text-red-500 text-xs mt-1 font-semibold">{{ form.password.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-500/30 transition-all active:scale-95">
+                        Secure Login
+                    </button>
+                </form>
+
+                <p class="text-center lg:text-left mt-6 text-slate-500 font-medium text-sm">
+                    New here? <a href="{% url 'register' %}" class="text-indigo-600 font-bold hover:underline">Create an account</a>
+                </p>
+            </div>
         </div>
 
-        <p class="text-center mt-8 text-slate-500 font-medium">
-            New here? <a href="{% url 'register' %}" class="text-blue-600 font-bold hover:underline transition">Create an account</a>
-        </p>
     </div>
 
+    <script>
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('id_password'); // Django assigns id_password to password field
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeSlashIcon = document.getElementById('eye-slash-icon');
+            
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.classList.add('hidden');
+                eyeSlashIcon.classList.remove('hidden');
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.classList.remove('hidden');
+                eyeSlashIcon.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
