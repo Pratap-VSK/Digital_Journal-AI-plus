@@ -11,16 +11,17 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
-        /* Ultra-compact form for registration */
-        form p { margin-bottom: 0.65rem; }
-        form label { display: block; font-size: 0.7rem; font-weight: 800; color: #475569; margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        form input { width: 100%; padding: 0.6rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-size: 0.85rem; transition: all 0.2s; }
-        form input:focus { border-color: #3b82f6; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        /* Premium Form Input Styling */
+        form label { display: block; font-size: 0.65rem; font-weight: 800; color: #475569; margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        form input:not([type="checkbox"]) { width: 100%; padding: 0.6rem 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; background: #f8fafc; outline: none; font-size: 0.85rem; transition: all 0.2s; }
+        form input:not([type="checkbox"]):focus { border-color: #3b82f6; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
         
-        /* Shrinking the long Django password text */
-        .helptext { display: block; font-size: 0.65rem; color: #94a3b8; margin-top: 0.25rem; line-height: 1.2; }
-        ul.errorlist { font-size: 0.7rem; color: #ef4444; margin-bottom: 0.2rem; font-weight: 600; }
-        ul.errorlist li { list-style-type: none; }
+        /* Checkbox Styling */
+        form input[type="checkbox"] { width: auto; accent-color: #2563eb; transform: scale(1.1); margin-top: 3px; cursor: pointer; }
+        
+        /* Django Error Formatting */
+        .helptext { display: none; } /* Hide default complex Django help text */
+        ul.errorlist { font-size: 0.65rem; color: #ef4444; margin-top: 0.2rem; font-weight: 600; list-style-type: none; padding-left: 0; }
     </style>
 </head>
 <body class="antialiased bg-white text-slate-800">
@@ -92,8 +93,58 @@
 
                 <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+                    
+                    {% if form.non_field_errors %}
+                        <div class="mb-4 text-red-500 text-xs font-bold">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                            {{ form.first_name }}
+                            {{ form.first_name.errors }}
+                        </div>
+                        <div>
+                            <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                            {{ form.last_name }}
+                            {{ form.last_name.errors }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}">Email Address</label>
+                        {{ form.email }}
+                        {{ form.email.errors }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}">Username</label>
+                        {{ form.username }}
+                        {{ form.username.errors }}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label for="{{ form.password1.id_for_label }}">Password</label>
+                            {{ form.password1 }}
+                            {{ form.password1.errors }}
+                        </div>
+                        <div>
+                            <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                            {{ form.password2 }}
+                            {{ form.password2.errors }}
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2 mb-6">
+                        {{ form.terms }}
+                        <label for="{{ form.terms.id_for_label }}" class="text-[0.65rem] text-slate-500 font-medium normal-case tracking-normal cursor-pointer">
+                            I agree to the <a href="#" class="text-blue-600 font-bold hover:underline">Privacy Policy</a> and Terms of Service.
+                        </label>
+                        {{ form.terms.errors }}
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-95">
                         Create Secure Account
                     </button>
                 </form>

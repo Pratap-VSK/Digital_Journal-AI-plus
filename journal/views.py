@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import JournalEntry
 from .forms import JournalEntryForm
-from .ai_service import generate_ai_content  # Aapka GenAI module
+from .ai_service import analyze_journal_entry  # Aapka GenAI module
 
 @login_required(login_url='login')
 def dashboard_view(request):

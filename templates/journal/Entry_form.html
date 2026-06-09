@@ -1,52 +1,80 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
     <div class="flex items-center justify-between mb-8">
-        <a href="{% url 'dashboard' %}" class="inline-flex items-center gap-2 text-slate-400 hover:text-slate-900 font-bold transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Cancel & Return
+        <a href="{% url 'dashboard' %}" class="inline-flex items-center gap-2 text-slate-400 hover:text-slate-900 font-bold transition group">
+            <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Back to Vault
         </a>
         
-        <div class="bg-green-50 text-green-700 px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm border border-green-100">
-            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            Auto-Save Active
+        <div class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest flex items-center gap-2 shadow-sm border border-indigo-100">
+            <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+            Draft Mode
         </div>
     </div>
 
-    <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden relative">
+    <div class="bg-white rounded-[2rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden relative">
         
-        <div class="h-2 w-full bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+        <div class="h-1.5 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
 
         <form method="post" class="p-8 md:p-14">
             {% csrf_token %}
             
-            <style>
-                #id_title { width: 100%; font-size: 3rem; font-weight: 900; color: #0f172a; border: none; background: transparent; outline: none; margin-bottom: 2rem; line-height: 1.2; letter-spacing: -0.025em; }
-                #id_title::placeholder { color: #cbd5e1; }
-                
-                #id_content { width: 100%; min-height: 500px; font-size: 1.25rem; line-height: 1.8; color: #334155; border: none; background: transparent; outline: none; resize: vertical; font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; }
-                #id_content::placeholder { color: #94a3b8; font-style: italic; }
-                
-                label[for="id_title"], label[for="id_content"] { display: none; }
-            </style>
+            {% if form.errors %}
+                <div class="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl">
+                    <p class="text-sm font-bold text-red-600 mb-1">Please fix the following errors:</p>
+                    <ul class="text-xs text-red-500 font-semibold list-disc pl-5">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
 
-            <input type="text" name="{{ form.title.name }}" id="id_title" value="{{ form.title.value|default:'' }}" placeholder="Give it a title..." required autofocus>
+            <div class="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                {% now "l, F j, Y" %}
+            </div>
+
+            <input type="text" 
+                   name="title" 
+                   id="id_title" 
+                   value="{{ form.title.value|default_if_none:'' }}" 
+                   class="w-full text-4xl md:text-5xl font-black text-slate-900 bg-transparent border-none outline-none placeholder:text-slate-300 mb-6 focus:ring-0 p-0" 
+                   placeholder="Give your entry a title..." 
+                   required autofocus>
             
-            <textarea name="{{ form.content.name }}" id="id_content" placeholder="Start typing your thoughts here..." required>{{ form.content.value|default:'' }}</textarea>
+            <div class="w-12 h-1.5 bg-indigo-100 rounded-full mb-8"></div>
+
+            <textarea name="content" 
+                      id="id_content" 
+                      x-data
+                      x-init="$el.style.height = 'auto'; $el.style.height = $el.scrollHeight + 'px'"
+                      @input="$el.style.height = 'auto'; $el.style.height = $el.scrollHeight + 'px'"
+                      class="w-full min-h-[400px] text-lg md:text-xl text-slate-700 font-serif leading-[2.2] bg-transparent border-none outline-none placeholder:text-slate-300 focus:ring-0 p-0 resize-none overflow-hidden" 
+                      placeholder="Start writing your thoughts here... Press enter for a new line." 
+                      required>{{ form.content.value|default_if_none:'' }}</textarea>
             
-            <div class="mt-10 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div class="mt-12 pt-8 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-6">
+                
                 <p class="text-sm text-slate-400 font-bold flex items-center gap-2">
-                    <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                     End-to-End Encrypted
                 </p>
                 
-                <button type="submit" class="w-full sm:w-auto px-10 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 transition-all hover:-translate-y-1 flex items-center justify-center gap-3">
-                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    Save & Run AI Analysis
+                <button type="submit" class="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 transition-all duration-300 hover:-translate-y-1 flex items-center justify-center gap-3 group">
+                    <svg class="w-5 h-5 text-indigo-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Save & Analyze with AI
                 </button>
             </div>
+
         </form>
     </div>
 </div>

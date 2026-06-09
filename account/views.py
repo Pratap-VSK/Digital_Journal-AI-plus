@@ -9,20 +9,21 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.conf import settings
+from .forms import CustomRegisterForm
 
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard') # Agar logged in hai toh register pe mat aane do
         
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, "Account created successfully!")
             return redirect('dashboard')
     else:
-        form = UserCreationForm()
+        form = CustomRegisterForm()
     return render(request, 'accounts/register.html', {'form': form})
 
 def login_view(request):
@@ -127,3 +128,6 @@ ProJournal Team'''
             return JsonResponse({'success': False, 'message': str(e)})
 
     return render(request, 'accounts/forgot_password.html')
+
+def user_profile_views(request):
+    return render(request, 'accounts/user_profile.html')

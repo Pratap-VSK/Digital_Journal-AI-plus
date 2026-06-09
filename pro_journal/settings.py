@@ -140,10 +140,8 @@ LOGOUT_URL = 'home'
 # ==========================================
 #        ALLAUTH PRIMIUM SETTINGS 
 # ==========================================
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
